@@ -1,98 +1,71 @@
-import { GlobalStyles } from "./GlobalStyle";
-import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
-import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
-import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import { useContext, useEffect, useState } from "react";
-import axios from "axios";
-import Link from "next/link";
-import { CartContext } from "./CartContext";
-import { LikeContext } from "./likeContext";
-import MenuIcon from '@mui/icons-material/Menu';
-import HomeIcon from '@mui/icons-material/Home';
-import CloseIcon from '@mui/icons-material/Close';
-import { Close } from "@mui/icons-material";
-import { AuthContext } from "./AuthContext";
-import { ListItem, ListItemIcon, ListItemText } from "@mui/material"
-import { LoginOutlined, VpnKeyOutlined } from "@mui/icons-material"
-import { useRouter } from "next/router";
+import dynamic from 'next/dynamic';
+import { useContext, useEffect, useState } from 'react';
+import axios from 'axios';
+import Link from 'next/link';
+import { CartContext } from './CartContext';
+import { LikeContext } from './likeContext';
+import { AuthContext } from './AuthContext';
+import { ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import { LoginOutlined, VpnKeyOutlined } from '@mui/icons-material';
+import { useRouter } from 'next/router';
+const h1Stilo = {
+  fontSize: '16px',
+};
 
+// Dynamic imports with lazy loading
+const ShoppingCartOutlinedIcon= dynamic(() => import('@mui/icons-material/ShoppingCartOutlined'));
+const FavoriteBorderOutlinedIcon= dynamic(() => import('@mui/icons-material/FavoriteBorderOutlined'));
+const SearchOutlinedIcon = dynamic(() => import('@mui/icons-material/SearchOutlined'));
+const MenuIcon = dynamic(() => import('@mui/icons-material/Menu'));
+const HomeIcon = dynamic(() => import('@mui/icons-material/Home'));
+const Close = dynamic(() => import('@mui/icons-material/Close'));
 
-const h1Stilo={
-    'fontSize':'16px'
-}
-export default function HeaderPrincipal({categories:existingCategories}) {
-    const [categories,setCategories] = useState([]);
-    const [categoriesParent, setCategoriesParent]=useState([])
-    const {cartProducts} = useContext(CartContext);
-    const {likeProducts} = useContext(LikeContext);
-    const [isActive, setIsActive] = useState(false);
-    const [valorBuscar, setValorBuscar] = useState('');
-    const {isLoggedIn,user, logout} = useContext(AuthContext);
-    const router = useRouter();
-    const handleMobileMenuOpen = () => {
-        setIsActive(true);
-    };
-    
-    const handleMobileMenuClose = () => {
-        setIsActive(false);
-      };
-    
-      const handleOverlayClick = () => {
-        setIsActive(false);
-      };
-    useEffect(()=>{    
-        categoriesParents();    
-    }, []);
-/*
-    async function fetchCategories() {
-        await axios.get('/api/categories').then(result => {
-            console.log(result.data);
-            setTimeout(() => {
-                setCategories(result.data);
-            }, 100);
-         
-    
-        });
-      }
-    */
-    function categoriesParents(){
-        const categoriesParent=[];
-        existingCategories.map( category =>
-            {
-                if(!category.parent && categoriesParent.length<=4){
-                    categoriesParent.push(category)
-                }
-            }
-        
-        )
-        setCategoriesParent(categoriesParent);
-    }
-    
-    function categoriasHijas(categoriesALL, categoriesPadre){
-        
-        const hijas=[];
-        categoriesALL.map(categoria => {
-            if(categoria.parent==categoriesPadre._id){
-                hijas.push(categoria);
-            }
-        })
-        return hijas;
-    }
-    
-    const navigateTo = ( url ) => {
-        //toggleSideMenu();
-        router.push(url);
-    }
-    function buscar(){
-        //ev.preventDefault();
-        router.replace(`/buscar/${valorBuscar}`)
-    }
-    function quitarEspacios(cadena) {
-           
-        // Utiliza una expresión regular para eliminar los espacios en blanco globalmente (g) de la cadena
-        return cadena.toLowerCase().replace(/\s/g, '');
-      }
+export default function HeaderPrincipal({ categories: existingCategories }) {
+  const { cartProducts } = useContext(CartContext);
+  const { likeProducts } = useContext(LikeContext);
+  const [isActive, setIsActive] = useState(false);
+  const [valorBuscar, setValorBuscar] = useState('');
+  const [categoriesParent,setCategoriesParent]= useState([])
+  const { isLoggedIn, logout } = useContext(AuthContext);
+  const router = useRouter();
+
+  const handleMobileMenuOpen = () => {
+    setIsActive(true);
+  };
+
+  const handleMobileMenuClose = () => {
+    setIsActive(false);
+  };
+
+  const handleOverlayClick = () => {
+    setIsActive(false);
+  };
+
+  useEffect(() => {
+    categoriesParents();
+  }, []);
+
+  function categoriesParents() {
+    const categoriesParent = existingCategories.filter((category) => !category.parent);
+    setCategoriesParent(categoriesParent);
+  }
+
+  function categoriasHijas(categoriesALL, categoriesPadre) {
+    const hijas = categoriesALL.filter((categoria) => categoria.parent === categoriesPadre._id);
+    return hijas;
+  }
+
+  const navigateTo = (url) => {
+    router.push(url);
+  };
+
+  function buscar() {
+    router.replace(`/buscar/${valorBuscar}`);
+  }
+
+  function quitarEspacios(cadena) {
+    return cadena.toLowerCase().replace(/\s/g, '');
+  }
     return (
         
     
