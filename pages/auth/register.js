@@ -1,14 +1,15 @@
-import { AuthLayout } from "@/components/AuthLayout";
+
 import { ErrorOutline } from "@mui/icons-material";
 import { Box, Button, Chip, Grid, TextField, Typography } from "@mui/material";
 import axios from "axios";
 import Link from "next/link";
 import Cookies from 'js-cookie';
 import { useState } from "react";
-import { getSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Snackbar from '@mui/material/Snackbar';
 import { Alert } from "@mui/material";
+import dynamic from "next/dynamic";
+import { AuthLayout } from "@/components/AuthLayout";
 
 export default function RegisterPage(){
     

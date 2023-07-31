@@ -1,40 +1,38 @@
 
 import {mongooseConnect} from "@/lib/mongoose";
 import {Product} from "@/models/Product";
-import HeaderPrincipal from "@/components/HeaderPrincipal";
 import { Category } from "@/models/Category";
-import Footer from "@/components/Foooter";
-import Main from "@/components/Main";
+import React from "react";
+import dynamic from "next/dynamic";
 
-
-
-export default function ProductsPage({products, categorias, allProducts}) {
+const LazyHeaderPrincipal = dynamic(() => import("@/components/HeaderPrincipal"));
+const LazyFooter = dynamic(() => import("@/components/Foooter"));
+const LazyMain = dynamic(() => import("@/components/Main"));
+export default function ProductsPage({categorias, allProducts}) {
   return (
     <div>
-      <HeaderPrincipal categories={categorias} />
-      <div className="product-container">
+          <LazyHeaderPrincipal categories={categorias} />
 
-          <div className="container">
-            <div className="product-box">
-              <Main products={allProducts} categories={categorias}/>
-            </div>
-          </div>
-      </div>
-      <Footer categories={categorias}> </Footer>
-      
+                <div className="product-container">
+
+                    <div className="container">
+                      <div className="product-box">
+                        <LazyMain products={allProducts} categories={categorias}/>
+                      </div>
+                    </div>
+                </div>
+           <LazyFooter categories={categorias}> </LazyFooter>
     </div>
   );
 }
 
 export async function getServerSideProps() {
   await mongooseConnect();
-  const products = await Product.find({}, null, {sort:{'_id':-1}});
   const categoria = await Category.find({}, null);
   const allProducts = await Product.find({}, null).populate('category');
   allProducts.reverse();
   return {
     props:{
-      products: JSON.parse(JSON.stringify(products)),
       allProducts: JSON.parse(JSON.stringify(allProducts)),
       categorias:JSON.parse(JSON.stringify(categoria))
     }

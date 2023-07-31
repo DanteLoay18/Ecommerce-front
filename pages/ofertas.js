@@ -1,10 +1,9 @@
 import {mongooseConnect} from "@/lib/mongoose";
 import {Product} from "@/models/Product";
-import HeaderPrincipal from "@/components/HeaderPrincipal";
 import { Category } from "@/models/Category";
-import Footer from "@/components/Foooter";
-import MainOfertas from "@/components/MainOfertas";
 import styled from "styled-components";
+import React from "react";
+import dynamic from "next/dynamic";
 const StyledDiv = styled.div`
   max-width: 1350px;
   min-height: 400px;
@@ -13,18 +12,22 @@ const StyledDiv = styled.div`
   margin-top:30px;
   margin-bottom: 40px;
 `;
+const LazyHeaderPrincipal = dynamic(() => import("@/components/HeaderPrincipal"));
+const LazyFooter = dynamic(() => import("@/components/Foooter"));
+const LazyMainOfertas = dynamic(() => import("@/components/MainOfertas"));
 export default function OfertasPage({categorias,allProducts}) {
     
     return (
         <div>
-          <HeaderPrincipal categories={categorias} />
+              <LazyHeaderPrincipal categories={categorias} />
 
-                  <StyledDiv>
-                        <MainOfertas products={allProducts} categories={categorias}/>
-                  </StyledDiv>
-                  
-                
-          <Footer categories={categorias}> </Footer>
+              <StyledDiv>
+                    <LazyMainOfertas products={allProducts} categories={categorias}/>
+              </StyledDiv>
+
+
+              <LazyFooter categories={categorias}> </LazyFooter>
+          
           
         </div>
       );

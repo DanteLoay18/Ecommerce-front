@@ -1,17 +1,23 @@
-import { AuthLayout } from "@/components/AuthLayout";
+
 import { ErrorOutline } from "@mui/icons-material";
 import { Box, Button, Chip, Grid, TextField, Typography } from "@mui/material";
 import axios from "axios";
 import Cookies from "js-cookie";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { signIn, getSession, getProviders } from 'next-auth/react';
+import { lazy, useState } from "react";
+import { signIn, getSession } from 'next-auth/react';
 import emailjs from '@emailjs/browser';
 import { useRouter } from "next/router";
 import Snackbar from '@mui/material/Snackbar';
 import { Alert } from "@mui/material";
-export default function LoginPage() {
+import dynamic from "next/dynamic";
+import { AuthLayout } from "@/components/AuthLayout";
+//import { AuthLayout } from "@/components/AuthLayout";
 
+//const AuthLayout = dynamic(() => import("@/components/AuthLayout"), { ssr: false });
+//const LazyAuthLayout = dynamic(() => import("@/components/AuthLayout"));
+export default function LoginPage() {
+    
     const [email, setEmail] = useState('');
     const [password, setPassword]= useState('');
     const [user, setUser]= useState(null);
@@ -237,31 +243,6 @@ export default function LoginPage() {
                         </Grid>
 
                             
-                        {/* <Grid item xs={12} display='flex' flexDirection='column' justifyContent='end'>
-                            <Divider sx={{ width: '100%', mb: 2 }} />
-                            {
-                                Object.values( providers ).map(( provider: any ) => {
-                                    
-                                    if ( provider.id === 'credentials' ) return (<div key="credentials"></div>);
-
-                                    return (
-                                        <Button
-                                            key={ provider.id }
-                                            variant="outlined"
-                                            fullWidth
-                                            color="primary"
-                                            sx={{ mb: 1 }}
-                                            onClick={ () => signIn( provider.id ) }
-                                        >
-                                            { provider.name }
-                                        </Button>
-                                    )
-
-                                })
-                            }
-
-                        </Grid> */}
-
                     </Grid>
                 </Box>
             </form>

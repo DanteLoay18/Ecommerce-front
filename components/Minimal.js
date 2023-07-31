@@ -6,7 +6,7 @@ export default function Minimal({products, categories}){
     const [productoNuevo, setProductoNuevo]= useState([]);
     const [productoMasVendido,setProductoMasVendido] = useState([])
     const [productoMejorValorado,setProductoMejorValorado] = useState([]);
-    const [oferta, setOferta] = useState({})
+
     useEffect(()=>{
       nuevosProductos();
       masVendidos();
@@ -95,7 +95,7 @@ export default function Minimal({products, categories}){
       if (categoriaEncontrada) {
           return categoriaEncontrada.name;
       }
-      return "ni";
+      return "";
     }
 
     function quitarEspacios(cadena) {

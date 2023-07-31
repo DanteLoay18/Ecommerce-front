@@ -1,10 +1,9 @@
 import {mongooseConnect} from "@/lib/mongoose";
 import {Product} from "@/models/Product";
-import HeaderPrincipal from "@/components/HeaderPrincipal";
 import { Category } from "@/models/Category";
-import Footer from "@/components/Foooter";
-import MainFavoritos from "@/components/MainFavoritos";
 import styled from "styled-components";
+import React from "react";
+import dynamic from "next/dynamic";
 const StyledDiv = styled.div`
   max-width: 1350px;
   min-height: 350px;
@@ -13,16 +12,18 @@ const StyledDiv = styled.div`
   margin-top:30px;
   margin-bottom: 40px;
 `;
-
+const LazyHeaderPrincipal =dynamic(() => import("@/components/HeaderPrincipal"));
+const LazyFooter = dynamic(() => import("@/components/Foooter"));
+const LazyFavoritos = dynamic(() => import("@/components/MainFavoritos"));
 export default function HomePage({categorias,allProducts}) {
     
     return (
         <div>
-          <HeaderPrincipal categories={categorias} />
-          <StyledDiv>
-               <MainFavoritos products={allProducts} categories={categorias}/>
-          </StyledDiv>
-          <Footer categories={categorias}> </Footer>
+            <LazyHeaderPrincipal categories={categorias} />
+            <StyledDiv>
+               <LazyFavoritos products={allProducts} categories={categorias}/>
+            </StyledDiv>
+            <LazyFooter categories={categorias} />
           
         </div>
       );
@@ -31,16 +32,11 @@ export default function HomePage({categorias,allProducts}) {
 
 export async function getServerSideProps() {
     await mongooseConnect();
-    const products = await Product.find({}, null, {sort:{'_id':-1}});
     const categoria = await Category.find({}, null);
     const allProducts = await Product.find({}, null).populate('category');
     
-    function validarEstaConLike(){
-
-    }
     return {
       props:{
-        products: JSON.parse(JSON.stringify(products)),
         allProducts: JSON.parse(JSON.stringify(allProducts)),
         categorias:JSON.parse(JSON.stringify(categoria))
       }

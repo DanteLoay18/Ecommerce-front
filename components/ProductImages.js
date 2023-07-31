@@ -6,29 +6,31 @@ const Image = styled.img`
     max-height: 100%;
   `;
 const BigImage = styled.img`
-  max-width: 100%;
-  max-height: 200px;
+  max-width: 100% !important;
+  max-height: 200px !important; 
 `;
 const ImageButtons = styled.div`
-    display: flex;
-    gap: 10px;
-    flex-grow: 0;
-    margin-top: 10px;
+    display: flex ;
+    gap: 10px ;
+    flex-grow: 0 ;
+    margin-top: 10px ;
   `;
 const ImageButton = styled.div`
-    border: 2px solid #ccc;
+    border: 2px solid #ccc !important;
     ${props => props.active ? `
-      border-color: #ccc;
+      border-color: #ccc !important; 
     ` : `
-      border-color: transparent;
+      border-color: transparent !important;
     `}
-    height: 40px;
-    padding: 2px;
-    cursor: pointer;
-    border-radius: 5px;
+    height: 40px !important;
+    padding: 2px !important;
+    cursor: pointer !important;
+    border-radius: 5px !important;
   `;
+
+
 const BigImageWrapper = styled.div`
-  text-align: center;
+  text-align: center !important;
 `;
 
 export default function ProductImages({images}) {
@@ -38,13 +40,13 @@ export default function ProductImages({images}) {
       <BigImageWrapper>
         <BigImage src={activeImage} />
       </BigImageWrapper>
-      <ImageButtons>
+      <ImageButtons >
         {images.map(image => (
           <ImageButton
             key={image}
             active={image===activeImage}
             onClick={() => setActiveImage(image)}>
-            <img src={image} alt=""/>
+            <Image src={image} alt=""/>
           </ImageButton>
         ))}
       </ImageButtons>

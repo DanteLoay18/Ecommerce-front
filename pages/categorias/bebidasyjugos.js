@@ -1,11 +1,8 @@
 import {mongooseConnect} from "@/lib/mongoose";
 import {Product} from "@/models/Product";
-import HeaderPrincipal from "@/components/HeaderPrincipal";
 import { Category } from "@/models/Category";
-import Footer from "@/components/Foooter";
-import MainOfertas from "@/components/MainOfertas";
 import styled from "styled-components";
-import SubCategorias from "@/components/SubCategorias";
+import dynamic from "next/dynamic";
 const StyledDiv = styled.div`
   max-width: 1350px;
   min-height: 400px;
@@ -14,18 +11,21 @@ const StyledDiv = styled.div`
   margin-top:30px;
   margin-bottom: 40px;
 `;
+const LazyHeaderPrincipal = dynamic(() => import("@/components/HeaderPrincipal"));
+const LazyFooter = dynamic(() => import("@/components/Foooter"));
+const LazySubCategorias = dynamic(() => import("@/components/SubCategorias"));
 export default function BebidasYJugosPage({categorias,allProducts}) {
     
     return (
         <div>
-          <HeaderPrincipal categories={categorias} />
+          <LazyHeaderPrincipal categories={categorias} />
 
                   <StyledDiv>
-                      <SubCategorias categories={categorias} name={'Bebidas y jugos'} products={allProducts}></SubCategorias>
+                      <LazySubCategorias categories={categorias} name={'Bebidas y jugos'} products={allProducts}></LazySubCategorias>
                   </StyledDiv>
                   
                 
-          <Footer categories={categorias}> </Footer>
+          <LazyFooter categories={categorias}> </LazyFooter>
           
         </div>
       );

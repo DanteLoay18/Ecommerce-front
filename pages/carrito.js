@@ -1,21 +1,16 @@
-
 import styled from "styled-components";
-import Button from "@/components/Button";
-import {useContext, useEffect, useState} from "react";
-import {CartContext} from "@/components/CartContext";
+import { useContext, useEffect, useState } from "react";
+import { CartContext } from "@/components/CartContext";
 import axios from "axios";
-import Table from "@/components/Table";
-import Input from "@/components/Input";
-import HeaderPrincipal from "@/components/HeaderPrincipal";
-import { mongooseConnect } from "@/lib/mongoose";
-import { Category } from "@/models/Category";
-import Footer from "@/components/Foooter";
-import Snackbar from '@mui/material/Snackbar';
-import { Alert } from "@mui/material";
-import { AuthContext } from "@/components/AuthContext";
-import { useRouter } from "next/router";
-import emailjs from '@emailjs/browser';
 
+import { Snackbar, Alert } from "@mui/material";
+import { Category } from "@/models/Category";
+import { useRouter } from "next/router";
+import React from "react";
+import { mongooseConnect } from "@/lib/mongoose";
+import { AuthContext } from "@/components/AuthContext";
+import emailjs from '@emailjs/browser';
+import dynamic from "next/dynamic";
 
 const StyledDiv = styled.div`
   max-width: 1350px;
@@ -25,34 +20,34 @@ const StyledDiv = styled.div`
   margin-bottom: 40px;
 `;
 const ColumnsWrapper = styled.div`
-  display: grid ;
-  grid-template-columns: 1fr ;
+  display: grid;
+  grid-template-columns: 1fr;
   @media screen and (min-width: 768px) {
-    grid-template-columns: 1.2fr .8fr ;
+    grid-template-columns: 1.2fr 0.8fr;
   }
-  gap: 40px ;
-  margin-top: 40px ;
+  gap: 40px;
+  margin-top: 40px;
 `;
 
 const Box = styled.div`
-  background-color: #fff !!important;
-  border-radius: 10px !!important;
-  padding: 30px !!important;
+  background-color: #fff !important;
+  border-radius: 10px !important;
+  padding: 30px !important;
 `;
 
 const ProductInfoCell = styled.td`
-  padding: 10px 0 !!important;
+  padding: 10px 0 !important;
 `;
 
 const ProductImageBox = styled.div`
-  width: 70px ;
+  width: 70px;
   height: 100px;
   padding: 2px;
-  display:flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 10px;
-  img{
+  img {
     max-width: 60px;
     max-height: 60px;
   }
@@ -60,7 +55,7 @@ const ProductImageBox = styled.div`
     padding: 10px;
     width: 100px;
     height: 100px;
-    img{
+    img {
       max-width: 80px;
       max-height: 80px;
     }
@@ -77,11 +72,16 @@ const QuantityLabel = styled.span`
 `;
 
 const CityHolder = styled.div`
-  display:flex;
+  display: flex;
   gap: 5px;
 `;
 
 
+const LazyHeaderPrincipal = dynamic(() => import("@/components/HeaderPrincipal"), { ssr: false});
+const LazyFooter = dynamic(() => import("@/components/Foooter"), { ssr: false});
+const LazyTable= dynamic(() => import("@/components/Table"), { ssr: false});
+const LazyInput =dynamic(() => import("@/components/Input"), { ssr: false});
+const LazyButton =dynamic(() => import("@/components/Button"), { ssr: false});
 export default function CartPage({categorias}) {
   const {cartProducts,addProduct,removeProduct,clearCart} = useContext(CartContext);
   const [products,setProducts] = useState([]);
@@ -100,10 +100,11 @@ export default function CartPage({categorias}) {
   const router = useRouter();
   useEffect(() => {
     if (cartProducts.length > 0) {
-      axios.post('/api/cart', {ids:cartProducts})
-        .then(response => {
+      if (typeof window !== 'undefined') {
+        axios.post('/api/cart', { ids: cartProducts }).then((response) => {
           setProducts(response.data);
-        })
+        });
+      }
     } else {
       setProducts([]);
     }
@@ -300,22 +301,25 @@ export default function CartPage({categorias}) {
     
     return (
       <>
-        <HeaderPrincipal categories={categorias}/>
-        <StyledDiv>
-          <ColumnsWrapper>
-            <Box>
-              <h2>Gracias por tu compra!</h2>
-              <p>Te enviaremos un mensaje a tu correo.</p>
-            </Box>
-          </ColumnsWrapper>
-        </StyledDiv>
-        <Footer categories={categorias} ></Footer>
-      </>
+              <LazyHeaderPrincipal categories={categorias} />
+            
+              <StyledDiv>
+                <ColumnsWrapper>
+                  <Box>
+                    <h2>Gracias por tu compra!</h2>
+                    <p>Te enviaremos un mensaje a tu correo.</p>
+                  </Box>
+                </ColumnsWrapper>
+              </StyledDiv>
+              <LazyFooter categories={categorias} />
+       </>
+          
     );
   }
   return (
       < >
-      <HeaderPrincipal categories={categorias}/>
+        <LazyHeaderPrincipal categories={categorias} />
+      
       
           <StyledDiv>
             <ColumnsWrapper>
@@ -325,7 +329,7 @@ export default function CartPage({categorias}) {
                     <div>Tu carrito esta vacio</div>
                   )}
                   {cartProducts?.length > 0 && (
-                    <Table>
+                    <LazyTable>
                       <thead>
                         <tr>
                           <th>Producto</th>
@@ -344,13 +348,13 @@ export default function CartPage({categorias}) {
                               {product.title}
                             </ProductInfoCell>
                             <td>
-                              <Button
-                                onClick={() => lessOfThisProduct(product._id)}>-</Button>
+                              <LazyButton
+                                onClick={() => lessOfThisProduct(product._id)}>-</LazyButton>
                               <QuantityLabel>
                                 {cartProducts.filter(id => id === product._id).length}
                               </QuantityLabel>
-                              <Button
-                                onClick={() => moreOfThisProduct(product)}>+</Button>
+                              <LazyButton
+                                onClick={() => moreOfThisProduct(product)}>+</LazyButton>
                                 <Snackbar anchorOrigin={{ vertical:'top',horizontal:'center' }} open={open} autoHideDuration={6000} onClose={handleClose} key={'top' + 'center'}>
                                       <Alert  onClose={handleClose} severity="error" sx={{ width: '100%' }}  >
                                         {error}
@@ -393,48 +397,48 @@ export default function CartPage({categorias}) {
                           <td>S/{total}</td>
                         </tr>
                       </tbody>
-                    </Table>
+                    </LazyTable>
                   )}
                 </Box>
                 {!!cartProducts?.length && (
                   <Box>
                     <h2>Informacion de la orden</h2>
-                    <Input type="text"
+                    <LazyInput type="text"
                           placeholder="Nombre"
                           value={name}
                           name="name"
                           onChange={ev => setName(ev.target.value)} />
-                    <Input type="text"
+                    <LazyInput type="text"
                           placeholder="Email"
                           value={email}
                           name="email"
                           onChange={ev => setEmail(ev.target.value)}/>
                     <CityHolder>
-                      <Input type="text"
+                      <LazyInput type="text"
                             placeholder="Ciudad"
                             value={city}
                             name="city"
                             onChange={ev => setCity(ev.target.value)}/>
-                      <Input type="text"
+                      <LazyInput type="text"
                             placeholder="Codigo Postal"
                             value={postalCode}
                             name="postalCode"
                             onChange={ev => setPostalCode(ev.target.value)}/>
                     </CityHolder>
-                    <Input type="text"
+                    <LazyInput type="text"
                           placeholder="Direccion"
                           value={streetAddress}
                           name="streetAddress"
                           onChange={ev => setStreetAddress(ev.target.value)}/>
-                    <Input type="text"
+                    <LazyInput type="text"
                           placeholder="Pais"
                           value={country}
                           name="country"
                           onChange={ev => setCountry(ev.target.value)}/>
-                    <Button black block
+                    <LazyButton black block
                             onClick={goToPayment}>
                       Continuar con el pago
-                    </Button>
+                    </LazyButton>
                   </Box>
                 )}
               </ColumnsWrapper>
@@ -442,8 +446,8 @@ export default function CartPage({categorias}) {
             
           
        
-      <Footer categories={categorias} ></Footer>
-    </>
+        <LazyFooter categories={categorias} />
+        </>
     
   );
 }
